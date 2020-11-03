@@ -25,7 +25,7 @@ A range of evidence suggests that generics are a central vehicle by which essent
 
 Some recent work that serves as part of the backdrop for my own research on this issue comes from Korman and Khemlani (2020) who investigate what they call "teleological generics" which are generic generalizations that concern purposes or functions. They propose that people are more inclined to accept some teleological generics such as "cars are for driving" over others, such as "cars are for parking" when the feature or property bears a principled connection to the category.  One linguistic test of whether a property bears a principled connection to a category concerns whether one finds self-referential generalizations, e.g., Xs, by virtue of being Xs, are Y, acceptable.  So they predict that acceptance of teleological generics will be correlated with acceptance of self-referential generalizations.  In other words, people should be more inclined to accept "cars are for driving" than "cars are for parking" to the extent that they accept "cars, by virtue of being cars, are for driving" over "cars, by virtue of being cars, are for parking".  This is what is explored in their Experiment 1, which will be the focus of my replication.
 
-In Experiment 1 of Korman and Khemlani (2020), they presented half of their participants with a number of different teleological generic statements--i.e., assertions of the form NPplural+VPpurposive, e.g., “cars” + “are for driving”--that varied in whether the noun concerned artifacts (e.g., chairs) or biological parts (e.g., eyes) and whether the verbs, experimental and control, yielded either acceptable generalizations (e.g., chairs are for sitting, eyes are for seeing) or false generalizations (e.g., chairs are for dusting, eyes are for blinking). The other half of participants received those same statements in the form of self-referential generalizations (e.g., chairs, in virtue of being chairs, are for sitting, chairs, in virtue of being chairs, are for dusting). Participants indicated whether they thought the statement was true or false on a 7pt Likert scale ranging from -3 (definitely false) to 3 (definitely true). Their study thus involved a mixed design with Statement Type(Teleological Generic, Self-Referential Generalization) as a between-subjects factor and Verb(Experimental, Control) as a within-subjects factor. I don't anticipate any major challenges in implementing this replication.
+In Experiment 1 of Korman and Khemlani (2020), they presented half of their participants with a number of different teleological generic statements--i.e., assertions of the form NPplural+VPpurposive, e.g., “cars” + “are for driving”--that varied in whether the noun concerned artifacts (e.g., chairs) or biological parts (e.g., eyes) and whether the verbs, experimental and control, yielded either acceptable generalizations (e.g., chairs are for sitting, eyes are for seeing) or false generalizations (e.g., chairs are for dusting, eyes are for blinking). The other half of participants received those same statements in the form of self-referential generalizations (e.g., chairs, in virtue of being chairs, are for sitting, chairs, in virtue of being chairs, are for dusting). Participants indicated whether they thought the statement was true or false on a 7pt Likert scale ranging from -3 (definitely false) to 3 (definitely true). Their study thus involved a mixed design with  Type(Teleological, Self-Referential) as a between-subjects factor and Statement(Experimental, Control) as a within-subjects factor. I don't anticipate any major challenges in implementing this replication.
 
 The link to the repository is [here](https://github.com/psych251/korman2020) and the link to the paper is [here](https://github.com/psych251/korman2020/tree/master/original_paper)
 
@@ -36,29 +36,57 @@ The link to the repository is [here](https://github.com/psych251/korman2020) and
 
 ###Power Analysis
 
-Original effect size, power analysis for samples to achieve 80%, 90%, 95% power to detect that effect size.  Considerations of feasibility for selecting planned sample size.
+The effect size they report for whether experimental and control items differ, arguably their most important test, is Cliff's δ=0.99.  This converts to Cohen's d=4.66 (see below). Because this is an incredibly large effect size, the sample sizes to detect this effect at 80%, 90% and 95% are very small (see power analyses below). At 80% and 90% power, I would only need a sample of roughy four people to detect an effect of the size they report. At 95% I would only need six participants.
+
+### Load Packages
+
+```{r}
+
+library("orddom") # computes ordinal statistics and effects sizes, inclduing conversions from Cliffs delta to Cohen's d
+library("pwr") # for power analysis
+
+```
+
+### Power Analysis
+```{r}
+
+delta2cohd(.99) # Convert Cliffs delta to Cohen's d
+
+pwr.t.test(n = 51, d = 4.66, type = "two.sample", alternative = "two.sided") # posthoc power to detect effect-size they report given the sample size they used
+
+
+pwr.t.test(d = 4.66, power = 0.80, type="two.sample",alternative="two.sided") # 80% power
+
+pwr.t.test(d = 4.66, power = 0.90, type="two.sample",alternative="two.sided") # 90% power
+
+pwr.t.test(d = 4.66, power = 0.95, type="two.sample",alternative="two.sided") # 95% power
+
+
+
+```
+
+
 
 ###Planned Sample
 
-Planned sample size and/or termination rule, sampling frame, known demographics if any, preselection rules if any.
+Korman and Khemlani (2020) note that: “The sample size for each study (n = 50) was projected by doubling the sample size from a reference study (Prasada et al., 2013, Experiment 2, which had n = 25). To verify that our sample size was reasonable, we conducted a post-hoc power analysis using the “pwr” package in R. Our goal was to obtain .95 power to detect a large correlation (r = .50) at a conservative the standard .05 alpha error probability”. In their Experiment 1, 51 participants completed the experiment. See “Sample Size Rationale” [here](https://osf.io/vzmdj). Since their effect size is so large (see above) and the sample size needed to detect it so small, I decided to sample 25 people.  This is half of their origial sample size but 4 times more than the roughly 6 paricipants needed to detect an effect of the size they report with 95% power.
 
 ###Materials
 
-All materials - can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article.
+The materials consist in a total of 88 statements.  Forty-four involve teleological generics and half are experimental items while the other half are control items.  The other 44 statements involve self-referential generalizations with half of those being experimental items and the other half being control items. The full set of materials can be found [here](https://osf.io/m9hjr/).
 
 ###Procedure	
 
-Can quote directly from original article - just put the text in quotations and note that this was followed precisely.  Or, quote directly and just point out exceptions to what was described in the original article.
+Following Korman and Khemlani (2020), participants will be drawn from Amazon Mechanical Turk and paid $1.25 for their participation. Participants will be randomly assigned to receive either the teleological generics or the self-referential generalization items. Experimental and control statements in both the teleological generic and self-referential generalization conditions will be randomly rotated.  For each statement, participants will register their responses by moving a slider displayed ranging from −3 (definitely false) to 3 (definitely true). After rating each statement, participants will fill out a brief demographic questionnaire, reporting their age, biological sex and whether they are a native English speaker.
 
 ###Analysis Plan
 
-Can also quote directly, though it is less often spelled out effectively for an analysis strategy section.  The key is to report an analysis strategy that is as close to the original - data cleaning rules, data exclusion rules, covariates, etc. - as possible.  
-
-**Clarify key analysis of interest here**  You can also pre-specify additional analyses you plan to do.
+I will follow the authors analysis plan as seen [here]( https://osf.io/r79zk/).  First I will begin by aggregating the data (using the aggregating function in R), creating an “Answer” column and saving this data frame.  Next, I will conduct five Wilcoxon signed rank tests. The first will test for a difference between experimental and control statements.  The second will test for a difference between teleological generics and self-referential generalizations. The third will test for an interaction between these two variables. And the fourth and fifth will test experimental vs. control items for teleological generics and self-referential generalizations in isolation. Lastly, I will test for whether there is a correlation between teleological generics and self-referential generalizations.
 
 ###Differences from Original Study
 
-Explicitly describe known differences in sample, setting, procedure, and analysis plan from original study.  The goal, of course, is to minimize those differences, but differences will inevitably occur.  Also, note whether such differences are anticipated to make a difference based on claims in the original article or subsequent published research on the conditions for obtaining the effect.
+The methods, procedure and analysis plan closely follow that of the authors and so I anticipate any differences between the replication and original study to be fairly minimal.  But there will be one difference. The authors report that participants were “notified that they would be entered into a drawing to win a $10 bonus if they followed the task instructions. The bonus was subsequently paid to 10% of participants, chosen randomly”. To keep study costs down, participants will not be paid the bonus but instead will be paid, as the authors did, and they will only be paid $1.25 upon study completion.
+
 
 ### Methods Addendum (Post Data Collection)
 
@@ -73,28 +101,322 @@ You can comment this section out prior to final report with data collection.
 
 ##Results
 
+### Experiment
+The experiment can be found [here](https://stanforduniversity.qualtrics.com/jfe/form/SV_9yvQ3unW3RCchLL)
 
-### Data preparation
+### Load packages 
 
-Data preparation following the analysis plan.
-	
-```{r include=F}
-###Data Preparation
-
-####Load Relevant Libraries and Functions
-
-####Import data
-
-#### Data exclusion / filtering
-
-#### Prepare data for analysis - create columns etc.
+```{r, message=F}
+library("coin")   #from Korman and Khemlani for Wilcoxon tests
+library("knitr")      # for knitting  
+library("tidyverse")  # for everything else 
 ```
 
-### Confirmatory analysis
+### Pilot A
 
-The analyses as specified in the analysis plan.  
+### Read in data
 
-*Side-by-side graph with original graph is ideal here*
+```{r}
+df.pilotA.data = read.csv("../../korman2020/data/Replication_Pilot_A.csv")
+
+df.pilotA.formatted = df.pilotA.data %>%
+  #select only measurement variables
+  select(t_e_chair_1:s_c_stomach_1) %>%  
+  pivot_longer(cols=c(t_e_chair_1:s_c_stomach_1),
+               names_to = "Measurement", 
+               values_to = "Value",
+               values_drop_na = TRUE) %>%
+  separate(Measurement, c("Type", "Statement", "Item", "Extra"), "_") %>% 
+  # remove "Extra" since not needed
+  select(-c(Extra)) %>%
+  #convert to factor and rename levels
+  mutate(Type = factor(Type, labels = c("self-referential", "teleological")),
+         Statement = factor(Statement, labels = c("control", "experimental")),
+         Item = factor (Item))
+         
+df.pilotB.data = read.csv("../../korman2020/data/Replication_Pilot_B.csv")
+
+df.pilotB.formatted = df.pilotB.data %>%
+  #select only the four participants in Pilot B
+  slice(8:11) %>%
+  #select only measurement variables
+  select(t_e_chair_1:s_c_stomach_1) %>%  
+  pivot_longer(cols=c(t_e_chair_1:s_c_stomach_1),
+               names_to = "Measurement", 
+               values_to = "Value",
+               values_drop_na = TRUE) %>%
+  separate(Measurement, c("Type", "Statement", "Item", "Extra"), "_") %>% 
+  # remove "Extra" since not needed
+  select(-c(Extra)) %>%
+  #convert to factor and rename levels
+  mutate(Type = factor(Type, labels = c("self-referential", "teleological")),
+         Statement = factor(Statement, labels = c("control", "experimental")),
+         Item = factor (Item)) 
+ 
+         
+  
+# df.final.data = read.csv("../../korman2020/data/Replication_Final.csv")
+# 
+# df.final.formatted = df.final.data %>%
+#   #select only the twenty-five participants in the final replication
+#   slice(11:37) %>%
+#   #select only measurement variables
+#   select(t_e_chair_1:s_c_stomach_1) %>%  
+#   pivot_longer(cols=c(t_e_chair_1:s_c_stomach_1),
+#                names_to = "Measurement", 
+#                values_to = "Value",
+#                values_drop_na = TRUE) %>%
+#   separate(Measurement, c("Type", "Statement", "Item", "Extra"), "_") %>% 
+#   # remove "Extra" since not needed
+#   select(-c(Extra)) %>%
+#   #convert to factor and rename levels
+#   mutate(Type = factor(Type, labels = c("self-referential", "teleological")),
+#          Statement = factor(Statement, labels = c("control", "experimental")),
+#          Item = factor (Item)) 
+ 
+
+
+
+         
+```
+### Descriptives
+
+```{r}
+df.pilotA.means = df.pilotA.formatted %>%
+  group_by(Type, Statement) %>%
+  summarise(MeanRating = mean(Value), SD =sd(Value)) %>%
+  ungroup()
+
+df.pilotB.means = df.pilotB.formatted %>%
+  group_by(Type, Statement) %>%
+  summarise(MeanRating = mean(Value), SD =sd(Value)) %>%
+  ungroup()
+
+# df.final.means = df.final.formatted %>%
+#   group_by(Type, Statement) %>%
+#   summarise(MeanRating = mean(Value), SD =sd(Value)) %>%
+#   ungroup()
+  
+
+```
+### Plot
+
+```{r fig.height=14, fig.width=10}
+
+library("gridExtra")
+
+
+pilotA = ggplot(data = df.pilotA.formatted,
+       mapping = aes(x = Statement,
+                     y = Value,
+                     group = Type,
+                     fill = Type)) + 
+  stat_summary(fun = "mean", 
+               geom = "bar", 
+               position = position_dodge(width = 0.9)) +
+  stat_summary(fun.data = "mean_cl_boot", 
+               geom = "linerange",
+               position = position_dodge(width = 0.9)) +
+  scale_fill_brewer(palette = "Set1") + 
+  scale_y_continuous(breaks = seq(from = -3, to = 3, by = 1)) +
+  expand_limits(y = c(-3, 3)) + 
+  labs(y = "Mean Rating",
+    title= "Pilot A")
+
+
+pilotB = ggplot(data = df.pilotB.formatted,
+       mapping = aes(x = Statement,
+                     y = Value,
+                     group = Type,
+                     fill = Type)) + 
+  stat_summary(fun = "mean", 
+               geom = "bar", 
+               position = position_dodge(width = 0.9)) +
+  stat_summary(fun.data = "mean_cl_boot", 
+               geom = "linerange",
+               position = position_dodge(width = 0.9)) +
+  scale_fill_brewer(palette = "Set1") + 
+  scale_y_continuous(breaks = seq(from = -3, to = 3, by = 1)) +
+  expand_limits(y = c(-3, 3)) + 
+  labs(y = "Mean Rating",
+    title= "Pilot B")
+
+# final = ggplot(data = df.final.formatted,
+#        mapping = aes(x = Statement,
+#                      y = Value,
+#                      group = Type,
+#                      fill = Type)) + 
+#   stat_summary(fun = "mean", 
+#                geom = "bar", 
+#                position = position_dodge(width = 0.9)) +
+#   stat_summary(fun.data = "mean_cl_boot", 
+#                geom = "linerange",
+#                position = position_dodge(width = 0.9)) +
+#   scale_fill_brewer(palette = "Set1") + 
+#   scale_y_continuous(breaks = seq(from = -3, to = 3, by = 1)) +
+#   expand_limits(y = c(-3, 3)) + 
+#   labs(y = "Mean Rating",
+#     title= "Replication")
+
+
+# original paper data for graph
+original.df = tibble(Type = rep(c("self-referential", "teleological"), each = 2),
+                 Statement = rep(c("experimental", "control"), 2)) %>% 
+  mutate(prediction = c(2.48, -.91, 2.50, -.67),
+         sd = c(1.01, 1.97, 1.0, 1.98),
+         ci = c(.28, .55, .28, .55))
+         
+
+original.plot = ggplot(data = original.df,
+       mapping = aes(x = Statement,
+                     y = prediction,
+                     group = Type,
+                     fill = Type)) + 
+  geom_bar(color = "black",
+           stat = "identity",
+           position = position_dodge(width = .9)) +
+   geom_errorbar(aes(ymin=prediction-ci, 
+                    ymax=prediction+ci), 
+                    width=0,
+                    position = position_dodge(width = .9)) +
+  scale_fill_brewer(palette = "Set1") + 
+  scale_y_continuous(breaks = seq(from = -3, to = 3, by = 1)) +
+  expand_limits(y = c(-3, 3)) + 
+  labs(y = "Mean Rating",
+       title= "Original Results")
+
+
+
+grid.arrange(original.plot, pilotA, pilotB)
+
+ggsave("replication.png", grid.arrange(original.plot, pilotA, pilotB))
+
+```
+
+### Confirmatory analysis (following Korman and Khemlani analyses)
+
+### 1. Wilcoxon test: experimental vs. control
+
+```{r}
+
+# Pilot A
+wilcoxsign_test(df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "control"] ~
+                df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "experimental"])
+
+# Pilot B
+wilcoxsign_test(df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "control"] ~
+                df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "experimental"])
+
+# # Final
+# wilcoxsign_test(df.final.formatted$Value[df.final.formatted$Statement == "control"] ~
+#                 df.final.formatted$Value[df.final.formatted$Statement == "experimental"])
+
+```
+### 2. Wilcoxon test: teleological vs. self-referential
+
+```{r}
+
+# Pilot A
+wilcoxsign_test(df.pilotA.formatted$Value[df.pilotA.formatted$Type == "teleological"] ~
+                df.pilotA.formatted$Value[df.pilotA.formatted$Type == "self-referential"])
+
+# Pilot B
+wilcoxsign_test(df.pilotB.formatted$Value[df.pilotB.formatted$Type == "teleological"] ~
+                df.pilotB.formatted$Value[df.pilotB.formatted$Type == "self-referential"])
+
+# # Final
+# wilcoxsign_test(df.final.formatted$Value[df.final.formatted$Type == "teleological"] ~
+#                 df.final.formatted$Value[df.final.formatted$Type == "self-referential"])
+```
+### 3. Wilcoxon test: interaction between Type and Statement
+```{r}
+
+#Pilot A
+Control <- df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "control" & df.pilotA.formatted$Type == "teleological"] - 
+  df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "control" & df.pilotA.formatted$Type == "self-referential"]
+
+Experimental <- df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "experimental" & df.pilotA.formatted$Type == "teleological"] - 
+  df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "experimental" & df.pilotA.formatted$Type == "self-referential"]
+
+wilcoxsign_test(Control ~ Experimental)
+
+#Pilot B
+Control <- df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "control" & df.pilotB.formatted$Type == "teleological"] - 
+  df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "control" & df.pilotB.formatted$Type == "self-referential"]
+
+Experimental <- df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "experimental" & df.pilotB.formatted$Type == "teleological"] - 
+  df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "experimental" & df.pilotB.formatted$Type == "self-referential"]
+
+wilcoxsign_test(Control ~ Experimental)
+
+# #Final
+# Control <- df.final.formatted$Value[df.final.formatted$Statement == "control" & df.final.formatted$Type == "teleological"] - 
+#   df.final.formatted$Value[df.final.formatted$Statement == "control" & df.final.formatted$Type == "self-referential"]
+# 
+# Experimental <- df.final.formatted$Value[df.final.formatted$Statement == "experimental" & df.final.formatted$Type == "teleological"] - 
+#   df.final.formatted$Value[df.final.formatted$Statement == "experimental" & df.final.formatted$Type == "self-referential"]
+# 
+# wilcoxsign_test(Control ~ Experimental)
+
+```
+### 4.  Wilcoxon tests for planned comparisons
+```{r}
+
+#Pilot A
+#test of experimental vs. control within teleological
+wilcoxsign_test(df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "experimental" &
+                               df.pilotA.formatted$Type == "teleological"] ~
+                df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "control" &
+                               df.pilotA.formatted$Type == "teleological"])
+
+#test of experimental vs. control within self-referential
+wilcoxsign_test(df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "experimental" &
+                               df.pilotA.formatted$Type == "self-referential"] ~
+                df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "control" &
+                               df.pilotA.formatted$Type == "self-referential"])
+
+#Pilot B
+#test of experimental vs. control within teleological
+wilcoxsign_test(df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "experimental" &
+                               df.pilotB.formatted$Type == "teleological"] ~
+                df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "control" &
+                               df.pilotB.formatted$Type == "teleological"])
+
+#test of experimental vs. control within self-referential
+wilcoxsign_test(df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "experimental" &
+                               df.pilotB.formatted$Type == "self-referential"] ~
+                df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "control" &
+                               df.pilotB.formatted$Type == "self-referential"])
+
+# #Final
+# #test of experimental vs. control within teleological
+# wilcoxsign_test(df.final.formatted$Value[df.final.formatted$Statement == "experimental" &
+#                                df.final.formatted$Type == "teleological"] ~
+#                 df.final.formatted$Value[df.final.formatted$Statement == "control" &
+#                                df.final.formatted$Type == "teleological"])
+# 
+# #test of experimental vs. control within self-referential
+# wilcoxsign_test(df.final.formatted$Value[df.final.formatted$Statement == "experimental" &
+#                                df.final.formatted$Type == "self-referential"] ~
+#                 df.final.formatted$Value[df.final.formatted$Statement == "control" &
+#                                df.final.formatted$Type == "self-referential"])
+```
+### 5. Correlation between teleological and self-referential
+```{r}
+
+#Pilot A
+cor.test(df.pilotA.formatted$Value[df.pilotA.formatted$Type == "teleological"], df.pilotA.formatted$Value[df.pilotA.formatted$Type == "self-referential"], 
+         method = "pearson")
+
+#Pilot B
+cor.test(df.pilotB.formatted$Value[df.pilotB.formatted$Type == "teleological"], df.pilotB.formatted$Value[df.pilotB.formatted$Type == "self-referential"], 
+         method = "pearson")
+
+# #Final
+# cor.test(df.final.formatted$Value[df.final.formatted$Type == "teleological"], df.final.formatted$Value[df.final.formatted$Type == "self-referential"], 
+#          method = "pearson")
+```
+
 
 ###Exploratory analyses
 
