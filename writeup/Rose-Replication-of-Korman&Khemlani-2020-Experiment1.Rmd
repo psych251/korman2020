@@ -112,11 +112,12 @@ library("knitr")      # for knitting
 library("tidyverse")  # for everything else 
 ```
 
-### Pilot A
 
 ### Read in data
 
 ```{r}
+
+# Pilot A 
 df.pilotA.data = read.csv("../../korman2020/data/Replication_Pilot_A.csv")
 
 df.pilotA.formatted = df.pilotA.data %>%
@@ -133,7 +134,8 @@ df.pilotA.formatted = df.pilotA.data %>%
   mutate(Type = factor(Type, labels = c("self-referential", "teleological")),
          Statement = factor(Statement, labels = c("control", "experimental")),
          Item = factor (Item))
-         
+
+#Pilot B
 df.pilotB.data = read.csv("../../korman2020/data/Replication_Pilot_B.csv")
 
 df.pilotB.formatted = df.pilotB.data %>%
@@ -154,7 +156,7 @@ df.pilotB.formatted = df.pilotB.data %>%
          Item = factor (Item)) 
  
          
-  
+# Final Data for Replication
 # df.final.data = read.csv("../../korman2020/data/Replication_Final.csv")
 # 
 # df.final.formatted = df.final.data %>%
