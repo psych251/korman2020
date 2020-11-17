@@ -81,7 +81,7 @@ Following Korman and Khemlani (2020), participants will be drawn from Amazon Mec
 
 ###Analysis Plan
 
-I will follow the authors analysis plan as seen [here]( https://osf.io/r79zk/).  First I will begin by aggregating the data (using the aggregating function in R), creating an “Answer” column and saving this data frame.  Next, I will conduct five Wilcoxon signed rank tests. The first will test for a difference between experimental and control statements.  The second will test for a difference between teleological generics and self-referential generalizations. The third will test for an interaction between these two variables. And the fourth and fifth will test experimental vs. control items for teleological generics and self-referential generalizations in isolation. Lastly, I will test for whether there is a correlation between teleological generics and self-referential generalizations.
+I will follow the authors analysis plan as seen [here]( https://osf.io/r79zk/). First I will begin by aggregating the data (using the aggregating function in R), creating an “Answer” column and saving this data frame.  Next, I will conduct five Wilcoxon signed rank tests. The first will test for a difference between experimental and control statements.  The second will test for a difference between teleological generics and self-referential generalizations. The third will test for an interaction between these two variables. And the fourth and fifth will test experimental vs. control items for teleological generics and self-referential generalizations in isolation. Lastly, I will test for whether there is a correlation between teleological generics and self-referential generalizations.
 
 ###Differences from Original Study
 
@@ -90,13 +90,15 @@ The methods, procedure and analysis plan closely follow that of the authors and 
 
 ### Methods Addendum (Post Data Collection)
 
-You can comment this section out prior to final report with data collection.
 
 #### Actual Sample
-  Sample size, demographics, data exclusions based on rules spelled out in analysis plan
+The final sample size was 24.  Though 25 people were recruited from Amazon Mechanical Turk and tested in Qualtrics, one response was not recorded.  MTurk showed that 25 people completed the task; Qualtrics shows that 25 people completed it.  But for some reason, one response didn't end up actually being recorded.  
+  
+Mean age in the final sample was 32.65 (range of 24 - 55) after removing an outlier (reported age of 532). Six participants (25%) indicated that they were female. All participants reported English as their native language.
+
 
 #### Differences from pre-data collection methods plan
-  Any differences from what was described as the original plan, or “none”.
+There were no differences from what was described in the original plan, at least concerning data collection.  But one issue was that, as mentioned above, one response did not record.  The other was that 4 participants didn't respond to all the items and this led to difficulties with the Wilcoxon test. Instead of removing NA's, I had to replace them all with 0's. I also did not, as described in "Analysis Plan" above, make use of the aggregate function since it didn't seem necessary in the end.  
 
 
 ##Results
@@ -157,47 +159,127 @@ df.pilotB.formatted = df.pilotB.data %>%
  
          
 # Final Data for Replication
-# df.final.data = read.csv("../../korman2020/data/Replication_Final.csv")
-# 
-# df.final.formatted = df.final.data %>%
-#   #select only the twenty-five participants in the final replication
-#   slice(11:37) %>%
-#   #select only measurement variables
-#   select(t_e_chair_1:s_c_stomach_1) %>%  
-#   pivot_longer(cols=c(t_e_chair_1:s_c_stomach_1),
-#                names_to = "Measurement", 
-#                values_to = "Value",
-#                values_drop_na = TRUE) %>%
-#   separate(Measurement, c("Type", "Statement", "Item", "Extra"), "_") %>% 
-#   # remove "Extra" since not needed
-#   select(-c(Extra)) %>%
-#   #convert to factor and rename levels
-#   mutate(Type = factor(Type, labels = c("self-referential", "teleological")),
-#          Statement = factor(Statement, labels = c("control", "experimental")),
-#          Item = factor (Item)) 
- 
+df.final.data = read.csv("../../korman2020/data/Replication_Final.csv")
+
+#Dataset removing NA's
+df.final.formatted.long = df.final.data %>%
+  #select only the twenty-five participants in the final replication
+  slice(12:37) %>%
+  #select only measurement variables
+  select(t_e_chair_1:s_c_stomach_1) %>%
+  mutate(Participant = 1:n()) %>% 
+  pivot_longer(cols=c(t_e_chair_1:s_c_stomach_1),
+               names_to = "Measurement",
+               values_to = "Value") %>%
+  separate(Measurement, c("Type", "Statement", "Item", "Extra"), "_") %>%
+  # remove "Extra" since not needed
+  select(-c(Extra)) %>%
+  #convert to factor and rename levels
+  mutate(Type = factor(Type, labels = c("self-referential", "teleological")),
+         Statement = factor(Statement, labels = c("control", "experimental")),
+         Item = factor (Item)) %>% 
+  relocate(Participant) %>% 
+  na.omit() %>% 
+  # fix typos 
+  mutate(Item = str_replace(Item, "fortk", "fork"),
+         Item = str_replace(Item, "thraot", "throat")) %>%
+  # fix mislabeled items 
+  mutate(Item_duplicate = duplicated(.[,1:4]),
+         Item = ifelse(Item_duplicate & Item == "muscle", "ear", Item),
+         Item = ifelse(Item_duplicate & Item == "chair", "car", Item)) %>% 
+  select(-Item_duplicate) 
+
+
+#Dataset for replacing NA's with 0's (for the Wilcoxon Tests)
+df.final.formatted.long.test = df.final.data %>%
+  #select only the twenty-five participants in the final replication
+  slice(12:37) %>%
+  #select only measurement variables
+  select(t_e_chair_1:s_c_stomach_1) %>%
+  mutate(Participant = 1:n()) %>% 
+  pivot_longer(cols=c(t_e_chair_1:s_c_stomach_1),
+               names_to = "Measurement",
+               values_to = "Value") %>%
+  separate(Measurement, c("Type", "Statement", "Item", "Extra"), "_") %>%
+  # remove "Extra" since not needed
+  select(-c(Extra)) %>%
+  #convert to factor and rename levels
+  mutate(Type = factor(Type, labels = c("self-referential", "teleological")),
+         Statement = factor(Statement, labels = c("control", "experimental")),
+         Item = factor (Item)) %>% 
+  relocate(Participant) %>% 
+  # fix typos 
+  mutate(Item = str_replace(Item, "fortk", "fork"),
+         Item = str_replace(Item, "thraot", "throat")) %>%
+  # fix mislabeled items 
+  mutate(Item_duplicate = duplicated(.[,1:4]),
+         Item = ifelse(Item_duplicate & Item == "muscle", "ear", Item),
+         Item = ifelse(Item_duplicate & Item == "chair", "car", Item)) %>% 
+  select(-Item_duplicate) 
+
+#Replace NA's with 0's
+df.final.formatted.long.test[is.na(df.final.formatted.long.test)] = 0
 
 
 
+#Final Data Demographics
+df.final.demo = df.final.data %>%
+  #select only the twenty-five participants in the final replication
+  slice(12:37) %>%
+  #select only demographic variables
+  select(age:native)
+
+head(df.final.formatted.long)
          
 ```
+
+### Demographics
+```{r}
+#Final sample demographics
+age = df.final.demo %>%
+  summarise(mean_age = mean(age), age_range = range(age))
+
+#remove outlier(person who reported age of 532)
+age_adjusted = df.final.demo %>%
+  filter(!(age == "532")) %>%
+  summarise(mean_age = mean(age), age_range = range(age))
+
+native_english = df.final.demo %>% 
+  count(native, sort = TRUE)
+
+gender = df.final.demo %>%
+  count(sex, sort = TRUE)
+
+
+age
+age_adjusted
+native_english
+gender
+```
+
 ### Descriptives
 
 ```{r}
 df.pilotA.means = df.pilotA.formatted %>%
   group_by(Type, Statement) %>%
-  summarise(MeanRating = mean(Value), SD =sd(Value)) %>%
+  summarise(MeanRating = mean((Value), na.rm = TRUE), SD =sd((Value), na.rm = TRUE)) %>%
   ungroup()
+
+df.pilotA.means
 
 df.pilotB.means = df.pilotB.formatted %>%
   group_by(Type, Statement) %>%
-  summarise(MeanRating = mean(Value), SD =sd(Value)) %>%
+  summarise(MeanRating = mean((Value), na.rm = TRUE), SD =sd((Value), na.rm = TRUE)) %>%
   ungroup()
 
-# df.final.means = df.final.formatted %>%
-#   group_by(Type, Statement) %>%
-#   summarise(MeanRating = mean(Value), SD =sd(Value)) %>%
-#   ungroup()
+df.pilotB.means
+
+df.final.means = df.final.formatted.long %>%
+  group_by(Type, Statement) %>%
+  summarise(MeanRating = mean((Value), na.rm = TRUE), SD =sd((Value), na.rm = TRUE)) %>%
+  ungroup()
+
+df.final.means
   
 
 ```
@@ -243,22 +325,22 @@ pilotB = ggplot(data = df.pilotB.formatted,
   labs(y = "Mean Rating",
     title= "Pilot B")
 
-# final = ggplot(data = df.final.formatted,
-#        mapping = aes(x = Statement,
-#                      y = Value,
-#                      group = Type,
-#                      fill = Type)) + 
-#   stat_summary(fun = "mean", 
-#                geom = "bar", 
-#                position = position_dodge(width = 0.9)) +
-#   stat_summary(fun.data = "mean_cl_boot", 
-#                geom = "linerange",
-#                position = position_dodge(width = 0.9)) +
-#   scale_fill_brewer(palette = "Set1") + 
-#   scale_y_continuous(breaks = seq(from = -3, to = 3, by = 1)) +
-#   expand_limits(y = c(-3, 3)) + 
-#   labs(y = "Mean Rating",
-#     title= "Replication")
+final = ggplot(data = df.final.formatted.long,
+       mapping = aes(x = Statement,
+                     y = Value,
+                     group = Type,
+                     fill = Type)) +
+  stat_summary(fun = "mean",
+               geom = "bar",
+               position = position_dodge(width = 0.9)) +
+  stat_summary(fun.data = "mean_cl_boot",
+               geom = "linerange",
+               position = position_dodge(width = 0.9)) +
+  scale_fill_brewer(palette = "Set1") +
+  scale_y_continuous(breaks = seq(from = -3, to = 3, by = 1)) +
+  expand_limits(y = c(-3, 3)) +
+  labs(y = "Mean Rating",
+    title= "Replication")
 
 
 # original paper data for graph
@@ -289,9 +371,9 @@ original.plot = ggplot(data = original.df,
 
 
 
-grid.arrange(original.plot, pilotA, pilotB)
+grid.arrange(original.plot, pilotA, pilotB, final)
 
-ggsave("replication.png", grid.arrange(original.plot, pilotA, pilotB))
+ggsave("replication.png", grid.arrange(original.plot, pilotA, pilotB, final))
 
 ```
 
@@ -309,9 +391,10 @@ wilcoxsign_test(df.pilotA.formatted$Value[df.pilotA.formatted$Statement == "cont
 wilcoxsign_test(df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "control"] ~
                 df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "experimental"])
 
-# # Final
-# wilcoxsign_test(df.final.formatted$Value[df.final.formatted$Statement == "control"] ~
-#                 df.final.formatted$Value[df.final.formatted$Statement == "experimental"])
+# Final
+wilcoxsign_test(df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "control"] ~
+                df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "experimental"])
+
 
 ```
 ### 2. Wilcoxon test: teleological vs. self-referential
@@ -326,9 +409,11 @@ wilcoxsign_test(df.pilotA.formatted$Value[df.pilotA.formatted$Type == "teleologi
 wilcoxsign_test(df.pilotB.formatted$Value[df.pilotB.formatted$Type == "teleological"] ~
                 df.pilotB.formatted$Value[df.pilotB.formatted$Type == "self-referential"])
 
-# # Final
-# wilcoxsign_test(df.final.formatted$Value[df.final.formatted$Type == "teleological"] ~
-#                 df.final.formatted$Value[df.final.formatted$Type == "self-referential"])
+# Final
+wilcoxsign_test(df.final.formatted.long.test$Value[df.final.formatted.long.test$Type == "teleological"] ~
+                df.final.formatted.long.test$Value[df.final.formatted.long.test$Type == "self-referential"])
+
+
 ```
 ### 3. Wilcoxon test: interaction between Type and Statement
 ```{r}
@@ -351,14 +436,14 @@ Experimental <- df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "expe
 
 wilcoxsign_test(Control ~ Experimental)
 
-# #Final
-# Control <- df.final.formatted$Value[df.final.formatted$Statement == "control" & df.final.formatted$Type == "teleological"] - 
-#   df.final.formatted$Value[df.final.formatted$Statement == "control" & df.final.formatted$Type == "self-referential"]
-# 
-# Experimental <- df.final.formatted$Value[df.final.formatted$Statement == "experimental" & df.final.formatted$Type == "teleological"] - 
-#   df.final.formatted$Value[df.final.formatted$Statement == "experimental" & df.final.formatted$Type == "self-referential"]
-# 
-# wilcoxsign_test(Control ~ Experimental)
+#Final
+Control <- df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "control" & df.final.formatted.long.test$Type == "teleological"] -
+  df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "control" & df.final.formatted.long.test$Type == "self-referential"]
+
+Experimental <- df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "experimental" & df.final.formatted.long.test$Type == "teleological"] -
+  df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "experimental" & df.final.formatted.long.test$Type == "self-referential"]
+
+wilcoxsign_test(Control ~ Experimental)
 
 ```
 ### 4.  Wilcoxon tests for planned comparisons
@@ -390,18 +475,18 @@ wilcoxsign_test(df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "expe
                 df.pilotB.formatted$Value[df.pilotB.formatted$Statement == "control" &
                                df.pilotB.formatted$Type == "self-referential"])
 
-# #Final
-# #test of experimental vs. control within teleological
-# wilcoxsign_test(df.final.formatted$Value[df.final.formatted$Statement == "experimental" &
-#                                df.final.formatted$Type == "teleological"] ~
-#                 df.final.formatted$Value[df.final.formatted$Statement == "control" &
-#                                df.final.formatted$Type == "teleological"])
-# 
-# #test of experimental vs. control within self-referential
-# wilcoxsign_test(df.final.formatted$Value[df.final.formatted$Statement == "experimental" &
-#                                df.final.formatted$Type == "self-referential"] ~
-#                 df.final.formatted$Value[df.final.formatted$Statement == "control" &
-#                                df.final.formatted$Type == "self-referential"])
+#Final
+#test of experimental vs. control within teleological
+wilcoxsign_test(df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "experimental" &
+                               df.final.formatted.long.test$Type == "teleological"] ~
+                df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "control" &
+                               df.final.formatted.long.test$Type == "teleological"])
+
+#test of experimental vs. control within self-referential
+wilcoxsign_test(df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "experimental" &
+                               df.final.formatted.long.test$Type == "self-referential"] ~
+                df.final.formatted.long.test$Value[df.final.formatted.long.test$Statement == "control" &
+                               df.final.formatted.long.test$Type == "self-referential"])
 ```
 ### 5. Correlation between teleological and self-referential
 ```{r}
@@ -414,22 +499,25 @@ cor.test(df.pilotA.formatted$Value[df.pilotA.formatted$Type == "teleological"], 
 cor.test(df.pilotB.formatted$Value[df.pilotB.formatted$Type == "teleological"], df.pilotB.formatted$Value[df.pilotB.formatted$Type == "self-referential"], 
          method = "pearson")
 
-# #Final
-# cor.test(df.final.formatted$Value[df.final.formatted$Type == "teleological"], df.final.formatted$Value[df.final.formatted$Type == "self-referential"], 
-#          method = "pearson")
+#Final
+cor.test(df.final.formatted.long.test$Value[df.final.formatted.long.test$Type == "teleological"], df.final.formatted.long.test$Value[df.final.formatted.long.test$Type == "self-referential"],
+         method = "pearson")
 ```
 
 
 ###Exploratory analyses
 
-Any follow-up analyses desired (not required).  
+No I didn't conduct any exploratory analyses.  
 
 ## Discussion
 
 ### Summary of Replication Attempt
 
-Open the discussion section with a paragraph summarizing the primary result from the confirmatory analysis and the assessment of whether it replicated, partially replicated, or failed to replicate the original result.  
+I was able to successfully replicate the original experiment 1 results from Korman and Khemladi (2020).  In fact, I replicated their findings at each step of the replication process, from pilots A and B to final data collection.  The main finding is that there is a difference in the evaluation of experimental and control statements and no difference in the overall evaluation of teleological and self-referential statements.
 
 ### Commentary
 
-Add open-ended commentary (if any) reflecting (a) insights from follow-up exploratory analysis, (b) assessment of the meaning of the replication (or not) - e.g., for a failure to replicate, are the differences between original and present study ones that definitely, plausibly, or are unlikely to have been moderators of the result, and (c) discussion of any objections or challenges raised by the current and original authors about the replication attempt.  None of these need to be long.
+The experiment successfully replicated.  I think there are at least two things that made this successful.  One was that the original effect was very large.  The other was that the authors had incredible documentation that made it very easy to follow their procedure step-by-step.  This last point bears emphasizing.  Doing a replication for a project that has little to no documentation would take a real herculean effort.  Having open, accessible, easily understandable and implementable materials massively reduces the kinds of typical frustrations that accompany a replication. I deeply appreciate the fact that the authors made their material easily accessible, understandable and straightforwardly implementable.  Their work has served as an excellent model for open and assessable science.  I plan to follow this in all my research moving forward.
+
+I also learned a couple of other valuable lessons about the experimental process.  One is that it is very important to make sure variables are all labeled appropriately and typo free before collecting data.  This will save time and headaches since you will spend less on data wrangling.  I’m very grateful to Tobi Gerstenberg for his assistance with helping me identify these issue and wrangle accordingly.  The second thing is that some decisions need to be made about how to handle missing data.  For instance, if a variable consists of responses to several items, failure to respond to one item can have an affect on data analysis.  In my case this posed an issue for carrying out the Wilcoxon tests that the authors conducted.  Do you drop all of the data associated with that participant or replace the missing value for the relevant items with a 0?  In my case, I went with the latter.  But I could have went with the former.  This is decision point that should be dealt with in advance.  In my own case, I didn’t anticipate it.  So while unexpected issues might arise, after grappling with them, they will then hopefully serve as part of the experimental planning and preregistration process. 
+
